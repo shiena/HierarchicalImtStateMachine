@@ -61,6 +61,20 @@
         "com.unity.modules.imgui": "1.0.0"
       }
     },
+    "jp.sinoa.icemilktea": {
+      "version": "https://github.com/Sinoa/IceMilkTea.git?path=Packages/IceMilkTea#develop",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {
+        "com.unity.modules.assetbundle": "1.0.0",
+        "com.unity.ugui": "1.0.0",
+        "com.unity.ext.nunit": "1.0.0",
+        "com.unity.test-framework": "1.1.11",
+        "com.unity.modules.video": "1.0.0",
+        "com.unity.modules.physics": "1.0.0"
+      },
+      "hash": "956d2ee83cec257b9caf4f358be6c71a9db03f4f"
+    },
     "com.unity.modules.ai": {
       "version": "1.0.0",
       "depth": 0,
