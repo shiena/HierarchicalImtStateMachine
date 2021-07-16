@@ -2,9 +2,13 @@ using UnityEngine;
 
 namespace Samples
 {
+    [RequireComponent(typeof(Rigidbody))]
     public class PlayerController : MonoBehaviour
     {
         public static PlayerController Instance { get; private set; }
+        [SerializeField] private float speed = 2;
+        private Rigidbody rb;
+        private Vector3 movement;
 
         private void Awake()
         {
@@ -17,6 +21,30 @@ namespace Samples
                 DontDestroyOnLoad(gameObject);
                 Instance = this;
             }
+        }
+
+        private void Start()
+        {
+            rb = GetComponent<Rigidbody>();
+        }
+
+        private void Update()
+        {
+            movement = new Vector3(
+                Input.GetAxis("Horizontal"),
+                0f,
+                Input.GetAxis("Vertical")
+            );
+        }
+
+        private void FixedUpdate()
+        {
+            Moving();
+        }
+
+        private void Moving()
+        {
+            rb.velocity = movement * speed;
         }
 
         private void OnDestroy()
