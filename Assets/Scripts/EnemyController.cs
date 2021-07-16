@@ -90,9 +90,9 @@ namespace Samples
             SendData,
         }
 
-        private readonly ImtStateMachine<ExtractIntel, InnerEventId> fsm;
+        private ImtStateMachine<ExtractIntel, InnerEventId> fsm;
 
-        public ExtractIntel()
+        protected override void Enter()
         {
             fsm = new ImtStateMachine<ExtractIntel, InnerEventId>(this);
             fsm.AddTransition<CollectData, SendData>(InnerEventId.SendData);
@@ -117,7 +117,7 @@ namespace Samples
 
         protected override void Exit()
         {
-            fsm.SendEvent(InnerEventId.CollectData);
+            fsm = null;
         }
     }
 
