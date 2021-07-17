@@ -1,5 +1,7 @@
+using System.Diagnostics;
 using IceMilkTea.Core;
 using UnityEngine;
+using UnityEngine.Scripting;
 
 namespace Samples
 {
@@ -86,18 +88,37 @@ namespace Samples
     {
         internal enum InnerEventId
         {
+            Reset,
             CollectData,
             SendData,
         }
 
-        private ImtStateMachine<ExtractIntel, InnerEventId> fsm;
+        private readonly ImtStateMachine<ExtractIntel, InnerEventId> fsm;
 
-        protected override void Enter()
+        [Preserve]
+        public ExtractIntel()
         {
             fsm = new ImtStateMachine<ExtractIntel, InnerEventId>(this);
+            RegisterAnyState();
+            fsm.AddAnyTransition<CollectData>(InnerEventId.Reset);
             fsm.AddTransition<CollectData, SendData>(InnerEventId.SendData);
             fsm.AddTransition<SendData, CollectData>(InnerEventId.CollectData);
             fsm.SetStartState<CollectData>();
+        }
+
+        [Conditional("ENABLE_IL2CPP")]
+        private void RegisterAnyState()
+        {
+            fsm.RegisterStateFactory(t =>
+                t == typeof(ImtStateMachine<,>.AnyState)
+                    ? new ImtStateMachine<ExtractIntel, InnerEventId>.AnyState()
+                    : null);
+        }
+
+        protected override void Enter()
+        {
+            fsm.Update();
+            fsm.SendEvent(InnerEventId.Reset);
         }
 
         protected override void Update()
@@ -113,11 +134,6 @@ namespace Samples
             }
 
             fsm.Update();
-        }
-
-        protected override void Exit()
-        {
-            fsm = null;
         }
     }
 
