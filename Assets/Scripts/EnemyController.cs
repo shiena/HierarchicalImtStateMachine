@@ -13,11 +13,14 @@ namespace Samples
         PlayerOutsideScanning,
     }
 
+    [RequireComponent(typeof(Renderer))]
     public class EnemyController : MonoBehaviour
     {
         private ImtStateMachine<EnemyController, EventId> fsm;
         public float playerScanningRange = 4f;
         public float ownScanningRange = 6f;
+        private Renderer r;
+        private static readonly int ColorId = Shader.PropertyToID("_Color");
 
         internal float DistanceToPlayer()
         {
@@ -49,8 +52,17 @@ namespace Samples
             fsm.SetStartState<FollowPlayer>();
         }
 
+        internal void ChangeColor(Color color)
+        {
+            var mb = new MaterialPropertyBlock();
+            r.GetPropertyBlock(mb);
+            mb.SetColor(ColorId, color);
+            r.SetPropertyBlock(mb);
+        }
+
         private void Start()
         {
+            TryGetComponent(out r);
             fsm.Update();
         }
 
@@ -62,6 +74,11 @@ namespace Samples
 
     internal class FollowPlayer : ImtStateMachine<EnemyController, EventId>.State
     {
+        protected override void Enter()
+        {
+            Context.ChangeColor(Color.red);
+        }
+
         protected override void Update()
         {
             Context.MoveTowardsPlayer(1);
@@ -74,6 +91,11 @@ namespace Samples
 
     internal class FleeFromPlayer : ImtStateMachine<EnemyController, EventId>.State
     {
+        protected override void Enter()
+        {
+            Context.ChangeColor(Color.cyan);
+        }
+
         protected override void Update()
         {
             Context.MoveTowardsPlayer(-1);
@@ -147,6 +169,7 @@ namespace Samples
             protected override void Enter()
             {
                 startTime = Time.time;
+                Context.Context.ChangeColor(Color.white);
             }
 
             protected override void Update()
@@ -171,6 +194,7 @@ namespace Samples
             protected override void Enter()
             {
                 startTime = Time.time;
+                Context.Context.ChangeColor(Color.yellow);
             }
 
             protected override void Update()
